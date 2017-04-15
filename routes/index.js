@@ -28,7 +28,7 @@ router.get('/register', function(req, res, next) {
     }
     else res.json({
       errno: 0,
-      userid: user._id
+      user: user
     });
   })
 });
@@ -50,7 +50,7 @@ router.get('/dropBottles', function(req, res){
     }
     else res.json({
       errno: 0,
-      bottleid: bottle._id,
+      bottle: bottle,
     })
   })
 });
