@@ -3,17 +3,52 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>    
     <script src="/javascripts/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    
+    <ul id="messages"></ul>
+    <form action="">
+      <input id='from_id' autocomplete="off" />
+      <input id='to_id' autocomplete="off" />
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
     <script>
-      var socket = io("http://localhost:3000");
-      socket.on('news', function(data) {
-        console.log(data);
-        socket.emit('my other event', {event: "call you"});
+      $(function () {
+        var socket = io();
+        $('form').submit(function(){
+          socket.emit('register_uid', {
+            userid: $('#from_id').val(), //'SyhZ1m10g',
+          });
+          socket.emit('send_voice', {
+            voice: $('#m').val(),
+            from_id : $('#from_id').val(), //'SyhZ1m10g',
+            to_id : $('#to_id').val(), //'ryPyUVyCx',
+          });
+          $('#m').val('');
+          return false;
+        });
+
+        socket.on('send_voice', function(msg){
+          $('#messages').append($('<li>').text(msg.voice));
+        });
+
       });
     </script>
   </body>
 </html>
+
+
+    

@@ -5,20 +5,19 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-
 var app = express();
 var io = require('socket.io')();
 
+//允许跨域访问
+var cors = require('cors')
+app.use(cors());
+
+var index = require('./routes/index')(io);
+var users = require('./routes/users');
+
 //事件监听
 app.io = io;
-io.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('my other event', function (data) {
-        console.log(data);
-    });
-});
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
