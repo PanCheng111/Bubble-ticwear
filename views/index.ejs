@@ -17,34 +17,153 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
+<!--    
+    <ul id="messages"></ul>-->
+    <!--<form action="">
+      <input id='lat' autocomplete="off" />
+      <input id='lng' autocomplete="off" />
+      <input id='userid' autocomplete="off" />
+      <input id="voice" autocomplete="off" /><button>Send</button>
+    </form>-->
+
+    <ul>
+      <input type="text" id="lat1" value="39.9846826328" />
+      <input type="text" id="lng1" value="116.3089431705" />
+      <input type="text" id="voice1" value="你好" />
+      <input type="text" id="userid1" value="By3hN0yRe" />
+      <button id="btn1" >上传</button>
+    </ul>
+
+    <ul>
+      <input type="text" id="lat2" value="39.9842676328" />
+      <input type="text" id="lng2" value="116.3103451705" />
+      <input type="text" id="voice2" value="这里景色很好" />
+      <input type="text" id="userid2" value="B1ixSAk0g" />
+      <button id="btn2" >上传</button>
+    </ul>
     
-    <ul id="messages"></ul>
-    <form action="">
-      <input id='from_id' autocomplete="off" />
-      <input id='to_id' autocomplete="off" />
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+    <ul>
+      <input type="text" id="lat3" value="39.9843156328" />
+      <input type="text" id="lng3" value="116.3085751705" />
+      <input type="text" id="voice3" value="你是谁？" />
+      <input type="text" id="userid3" value="Hk9jrCyCx" />
+      <button id="btn3" >上传</button>
+    </ul>
+
+    <ul>
+      <input type="text" id="lat4" value="39.9833206328" />
+      <input type="text" id="lng4" value="116.3095811705" />
+      <input type="text" id="voice4" value="哈哈哈" />
+      <input type="text" id="userid4" value="BkO1IRJRg" />
+      <button id="btn4" >上传</button>
+    </ul>
+
+    <ul>
+      <input type="text" id="lat5" value="39.9858226328" />
+      <input type="text" id="lng5" value="116.3102011705" />
+      <input type="text" id="voice5" value="到此一游" />
+      <input type="text" id="userid5" value="ry9QIC1Rg" />
+      <button id="btn5" >上传</button>
+    </ul>
+
+    <ul>
+      <input type="text" id="lat6" value="39.9828135317" />
+      <input type="text" id="lng6" value="116.3064962554" />
+      <input type="text" id="voice6" value="来过" />
+      <input type="text" id="userid6" value="rkodwAJ0l" />
+      <button id="btn6" >上传</button>
+    </ul>
+
+    <ul>
+      <input type="text" id="lat7" value="39.9889215317" />
+      <input type="text" id="lng7" value="116.3059212554" />
+      <input type="text" id="voice7" value="无聊中" />
+      <input type="text" id="userid7" value="BkspwCkRe" />
+      <button id="btn7" >上传</button>
+    </ul>
+
+    <ul>
+      <input type="text" id="lat8" value="39.9870695317" />
+      <input type="text" id="lng8" value="116.3045562554" />
+      <input type="text" id="voice8" value="猜猜我是谁" />
+      <input type="text" id="userid8" value="BkeYORk0x" />
+      <button id="btn8" >上传</button>
+    </ul>
 
     <script>
       $(function () {
         var socket = io();
-        $('form').submit(function(){
-          socket.emit('register_uid', {
-            userid: $('#from_id').val(), //'SyhZ1m10g',
+        $('#btn1').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice1').val(),
+            lat : $('#lat1').val(), //'SyhZ1m10g',
+            lng : $('#lng1').val(), //'ryPyUVyCx',
+            userid : $('#userid1').val(),
           });
-          socket.emit('send_voice', {
-            voice: $('#m').val(),
-            from_id : $('#from_id').val(), //'SyhZ1m10g',
-            to_id : $('#to_id').val(), //'ryPyUVyCx',
-          });
-          $('#m').val('');
-          return false;
         });
 
-        socket.on('send_voice', function(msg){
-          $('#messages').append($('<li>').text(msg.voice));
+        $('#btn2').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice2').val(),
+            lat : $('#lat2').val(), //'SyhZ1m10g',
+            lng : $('#lng2').val(), //'ryPyUVyCx',
+            userid : $('#userid2').val(),
+          });
         });
 
+        $('#btn3').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice3').val(),
+            lat : $('#lat3').val(), //'SyhZ1m10g',
+            lng : $('#lng3').val(), //'ryPyUVyCx',
+            userid : $('#userid3').val(),
+          });
+        });
+
+        $('#btn4').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice4').val(),
+            lat : $('#lat4').val(), //'SyhZ1m10g',
+            lng : $('#lng4').val(), //'ryPyUVyCx',
+            userid : $('#userid4').val(),
+          });
+        });
+
+        $('#btn5').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice5').val(),
+            lat : $('#lat5').val(), //'SyhZ1m10g',
+            lng : $('#lng5').val(), //'ryPyUVyCx',
+            userid : $('#userid5').val(),
+          });
+        });
+        
+        $('#btn6').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice6').val(),
+            lat : $('#lat6').val(), //'SyhZ1m10g',
+            lng : $('#lng6').val(), //'ryPyUVyCx',
+            userid : $('#userid6').val(),
+          });
+        });
+
+        $('#btn7').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice7').val(),
+            lat : $('#lat7').val(), //'SyhZ1m10g',
+            lng : $('#lng7').val(), //'ryPyUVyCx',
+            userid : $('#userid7').val(),
+          });
+        });
+
+        $('#btn8').click(function(){
+          socket.emit('dropBottle', {
+            voice: $('#voice8').val(),
+            lat : $('#lat8').val(), //'SyhZ1m10g',
+            lng : $('#lng8').val(), //'ryPyUVyCx',
+            userid : $('#userid8').val(),
+          });
+        });
       });
     </script>
   </body>

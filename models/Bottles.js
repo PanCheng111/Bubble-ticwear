@@ -24,10 +24,10 @@ var BottlesSchema = new Schema({
 
 BottlesSchema.statics = {
 
-    getAllByPosition : function(res, position, callBack){
+    getAllByPosition : function(socket, position, callBack){
         Bottles.find({}).populate('user').exec(function(err, bottlesList){
             if(err){
-                res.json({
+                socket.emit('queryBottles-reply', {
                     errno: 1,
                     message: err,
                 });

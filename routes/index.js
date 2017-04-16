@@ -48,6 +48,111 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('register', function(data){
+         console.log(data);
+      // socket.emit('register-reply', {message:'success'});
+        let deviceId = data.deviceId;
+        let gender = data.gender;
+        let photoUrl = data.photoUrl;
+        let user = new Users({deviceId: deviceId, gender: gender, photoUrl: photoUrl});
+        user.save(function(err) {
+          if (err) {
+            socket.emit('register-reply', {
+              errno: 1,
+              message : err
+            }); 
+          }
+          else socket.emit('register-reply', {
+            errno: 0,
+            message : '',
+            userid: user._id,
+          });
+        })
+    });
+
+    socket.on('queryBottles', function(data) {
+      console.log(data);
+      //var params = url.parse(req.url,true);
+      let lat = data.lat;
+      let lng = data.lng;
+      let userid = data.userid;
+      Bottles.getAllByPosition(socket, {lat: lat, lng: lng}, function(bottlesList) {
+        socket.emit('queryBottles-reply', {
+          errno: 0,
+          message: '',
+          bottlesList: bottlesList
+        });
+      });
+    });
+
+    socket.on('dropBottle', function(data) {
+      console.log(data);
+      let lat = data.lat;
+      let lng = data.lng;
+      let voice = data.voice;
+      let userid = data.userid; 
+      let user = new Users({_id: userid});
+      let bottle = new Bottles({user: user, position: {lat: lat, lng: lng}, voice: voice});
+      bottle.save(function(err) {
+        if (err) {
+          socket.emit('dropBottle-reply', {
+            errno: 1,
+            message: err,
+          });
+        }
+        else socket.emit('dropBottle-reply', {
+          errno: 0,
+          message: '',
+          bottleid: bottle._id,
+        })
+      });
+
+      io.emit('getAllBottles-reply', {
+        errno: 0,
+        message: '',
+        bottlesList: [bottle],
+      });
+    });
+
+    socket.on('getTalkedList', function(data) {
+      console.log(data);
+      let userid = data.userid;
+      Users.getUsersInfo(socket, userid, function(userInfo) {
+        socket.emit('getTalkedList-reply', {
+          errno: 0,
+          message: '',
+          userInfo: userInfo,
+        })
+      });
+    });
+
+    socket.on('getAllBottles', function() {
+        Bottles.find({}, function(err, bottlesList) {
+          if (err) socket.emit('getAllBottles-reply', {
+              errno: 1,
+              message: err,
+          });
+          else socket.emit('getAllBottles-reply', {
+              errno: 0,
+              message: '',
+              bottlesList: bottlesList,
+          });
+        });
+    });
+
+    socket.on('pullPendingMessage', function(data) {
+      console.log(data);
+      let userid = data.userid;
+      let fromid = data.fromid;
+      Users.getPendingMessage(socket, userid, fromid, function(messageList) {
+        socket.emit('pullPendingMessage-reply', {
+          errno: 0,
+          message: '',
+          messageList: messageList,
+        })
+      });
+    });
+
     socket.on('disconnect', function() {
         console.log('Got disconnect!');
         var i = allClients.indexOf(socket);
@@ -80,12 +185,12 @@ router.post('/register', function(req, res, next) {
   })
 });
 
-router.post('/dropBottles', function(req, res){
+router.get('/dropBottles', function(req, res){
   var params = url.parse(req.url,true);
-  let lat = req.body.lat;
-  let lng = req.body.lng;
-  let voice = req.body.voice;
-  let userid = req.query.userid; 
+  let lat = params.query.lat;
+  let lng = params.query.lng;
+  let voice = params.query.voice;
+  let userid = params.query.userid; 
   let user = new Users({_id: userid});
   let bottle = new Bottles({user: user, position: {lat: lat, lng: lng}, voice: voice});
   bottle.save(function(err) {
@@ -104,9 +209,9 @@ router.post('/dropBottles', function(req, res){
 
 router.post('/queryBottles', function(req, res) {
   var params = url.parse(req.url,true);
-  let lat = params.query.lat;
-  let lng = params.query.lng;
-  let userid = params.query.userid;
+  let lat = req.body.lat;
+  let lng = req.body.lng;
+  let userid = req.body.userid;
   Bottles.getAllByPosition(res, {lat: lat, lng: lng}, function(bottlesList) {
     res.json({
       errno: 0,
@@ -137,6 +242,60 @@ router.post('/pullPendingMessage', function(req, res) {
     })
   })
 
+});
+
+router.get('/delAllBottles', function(req, res) {
+  Bottles.remove({}, function(err) {
+    if (err)
+      res.json({
+        errno: 1,
+        message: err,
+      });
+      else res.json({
+        errno: 0,
+        message: 'del all bottles',
+      })
+  });
+});
+
+router.get('/getAllBottles', function(req, res) {
+  Bottles.find({}, function(err, bottlesList) {
+    if (err) res.json({
+        errno: 1,
+        message: err,
+    });
+    else res.json({
+        errno: 0,
+        message: bottlesList,
+    });
+  });
+});
+
+router.get('/delAllUsers', function(req, res) {
+  Users.remove({}, function(err) {
+    if (err)
+      res.json({
+        errno: 1,
+        message: err,
+      });
+      else res.json({
+        errno: 0,
+        message: 'del all Users',
+      })
+  });
+});
+
+router.get('/getAllUsers', function(req, res) {
+  Users.find({}, function(err, usersList) {
+    if (err) res.json({
+        errno: 1,
+        message: err,
+    });
+    else res.json({
+        errno: 0,
+        message: usersList,
+    });
+  });
 });
 
 return router;

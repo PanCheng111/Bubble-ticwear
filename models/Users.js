@@ -13,8 +13,8 @@ var UsersSchema = new Schema({
         'default': shortid.generate
     },
     deviceId: String,
-    sex:  String, // 'male' or 'female'
-    avatorIcon : String, // avatorId file name
+    gender:  String, // 'male' or 'female'
+    photoUrl : String, // avatorId file name
     talkedList : [{type: String, ref : "Users"}],
     unreadList : [{type: String, ref : "Users"}],
     pendingMessage : [
@@ -55,9 +55,9 @@ UsersSchema.statics = {
         });        
     },
 
-    getUsersInfo : function(res, userid, callBack) {
+    getUsersInfo : function(socket, userid, callBack) {
         Users.findOne({_id: userid}).populate('talkedList').populate('unreadList').exec(function(err, user) {
-            if (err) res.json({
+            if (err) socket.emit('getTalkedList-reply', {
                 errno: 1,
                 message: err,
             });
@@ -73,9 +73,9 @@ UsersSchema.statics = {
         })
     },
 
-    getPendingMessage : function(res, userid, fromid, callBack) {
+    getPendingMessage : function(socket, userid, fromid, callBack) {
         Users.findOne({_id: userid}, function(err, user) {
-            if (err) res.json({
+            if (err) socket.emit('pullPendingMessage-reply', {
                 errno: 1,
                 message: err,
             });
@@ -92,7 +92,7 @@ UsersSchema.statics = {
                 });
 
                 Users.update({_id: userid}, {$pull: {'pendingMessage': {from_id: fromid}}}, function(err) {
-                    if (err) res.json({
+                    if (err) socket.emit('pullPendingMessage-reply', {
                         errno: 1,
                         message: err,
                     });
